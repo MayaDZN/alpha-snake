@@ -34,6 +34,21 @@ let currentDifficulty = "medium";
 
 let highScore = localStorage.getItem("highScore") || 0;
 
+// Add new variables for sounds
+const backgroundMusic = new Audio("assets/sfx/space-background-music.mp3");
+const collectSound = new Audio("assets/sfx/collect-sound.mp3");
+const wrongSound = new Audio("assets/sfx/wrong-sound.mp3");
+const gameOverSound = new Audio("assets/sfx/game-over-sound.mp3");
+
+// Add new variables for screens
+const startScreen = document.getElementById("start-screen");
+const gameScreen = document.getElementById("game-screen");
+const gameOverScreen = document.getElementById("game-over-screen");
+const startButton = document.getElementById("start-button");
+const restartButton = document.getElementById("restart-button");
+const finalScore = document.getElementById("final-score");
+const finalHighScore = document.getElementById("final-high-score");
+
 function startGame() {
   // Clear any existing game loops
   if (gameLoopId) {
@@ -68,6 +83,15 @@ function startGame() {
       gameSpeed = 80;
       break;
   }
+
+  // Hide start screen and show game screen
+  startScreen.classList.add("hidden");
+  gameScreen.classList.remove("hidden");
+  gameOverScreen.classList.add("hidden");
+
+  // Start background music
+  backgroundMusic.loop = true;
+  backgroundMusic.play();
 
   // Start a new game loop
   gameLoop();
@@ -144,12 +168,16 @@ function update() {
     foods.splice(eatenFoodIndex, 1); // Remove the eaten food
 
     if (eatenFood.letter === missingLetter) {
+      stopSounds();
+      collectSound.play();
       score += 10;
       streak++;
       updateStreak();
       generateNewWord();
       spawnFoods();
     } else {
+      stopSounds();
+      wrongSound.play();
       snake.pop(); // Remove the last segment for incorrect letters
       snake.pop(); // Remove one more segment to make the snake smaller
       score = Math.max(0, score - 5); // Decrease score, but not below 0
@@ -160,7 +188,8 @@ function update() {
         endGame();
         return;
       }
-      spawnFoods(); // Respawn foods when eating incorrect letter
+      // Instead of respawning foods, just add the eaten food back
+      foods.push(eatenFood);
     }
     scoreDisplay.textContent = score;
   } else {
@@ -180,41 +209,62 @@ function checkSelfCollision() {
 }
 
 function draw() {
-  ctx.fillStyle = "#f0f0f0";
+  ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
   ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
+  // Draw twinkling stars
+  ctx.fillStyle = "white";
+  for (let i = 0; i < 50; i++) {
+    const x = Math.random() * CANVAS_WIDTH;
+    const y = Math.random() * CANVAS_HEIGHT;
+    const size = Math.random() * 2;
+    const opacity = Math.random();
+    ctx.globalAlpha = opacity;
+    ctx.fillRect(x, y, size, size);
+  }
+  ctx.globalAlpha = 1;
+
   // Draw snake
-  ctx.fillStyle = "green";
-  snake.forEach((segment) => {
-    ctx.fillRect(segment.x, segment.y, GRID_SIZE, GRID_SIZE);
+  ctx.fillStyle = "#0ff";
+  snake.forEach((segment, index) => {
+    const size = GRID_SIZE - index * 0.15; // Make the snake taper
+    ctx.fillRect(
+      segment.x + (GRID_SIZE - size) / 2,
+      segment.y + (GRID_SIZE - size) / 2,
+      size,
+      size
+    );
   });
 
-  // Draw food
-  ctx.fillStyle = "red";
+  // Draw food as planets/asteroids
   foods.forEach((food) => {
-    ctx.fillRect(food.x, food.y, GRID_SIZE, GRID_SIZE);
+    const gradient = ctx.createRadialGradient(
+      food.x + GRID_SIZE / 2,
+      food.y + GRID_SIZE / 2,
+      0,
+      food.x + GRID_SIZE / 2,
+      food.y + GRID_SIZE / 2,
+      GRID_SIZE / 2
+    );
+    gradient.addColorStop(0, "#f00"); // All fruits are now red
+    gradient.addColorStop(1, "rgba(0, 0, 0, 0.5)");
+
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(
+      food.x + GRID_SIZE / 2,
+      food.y + GRID_SIZE / 2,
+      GRID_SIZE / 2,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
     ctx.fillStyle = "white";
-    ctx.font = "12px Arial";
+    ctx.font = "12px Orbitron";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(food.letter, food.x + GRID_SIZE / 2, food.y + GRID_SIZE / 2);
-    ctx.fillStyle = "red"; // Reset fill style for the next food item
   });
-
-  // Draw grid (optional, for debugging)
-  ctx.strokeStyle = "#ccc";
-  for (let i = 0; i < CANVAS_WIDTH; i += GRID_SIZE) {
-    ctx.beginPath();
-    ctx.moveTo(i, 0);
-    ctx.lineTo(i, CANVAS_HEIGHT);
-    ctx.stroke();
-  }
-  for (let j = 0; j < CANVAS_HEIGHT; j += GRID_SIZE) {
-    ctx.beginPath();
-    ctx.moveTo(0, j);
-    ctx.lineTo(CANVAS_WIDTH, j);
-    ctx.stroke();
-  }
 }
 
 function endGame() {
@@ -224,13 +274,19 @@ function endGame() {
     gameLoopId = null;
   }
 
-  updateHighScore();
-  alert(`Game Over! Your score: ${score}\nHigh Score: ${highScore}`);
+  // Stop background music and play game over sound
+  backgroundMusic.pause();
+  backgroundMusic.currentTime = 0;
+  stopSounds();
+  gameOverSound.play();
 
-  // Use setTimeout to delay the start of a new game
-  setTimeout(() => {
-    startGame();
-  }, 100);
+  updateHighScore();
+
+  // Show game over screen
+  gameScreen.classList.add("hidden");
+  gameOverScreen.classList.remove("hidden");
+  finalScore.textContent = score;
+  finalHighScore.textContent = highScore;
 }
 
 document.addEventListener("keydown", (e) => {
@@ -287,3 +343,21 @@ function updateDifficultyButtons() {
 
 // Call this when the page loads
 document.addEventListener("DOMContentLoaded", updateDifficultyButtons);
+
+// Add event listeners for start and restart buttons
+startButton.addEventListener("click", startGame);
+restartButton.addEventListener("click", startGame);
+
+// Initial setup
+updateHighScore();
+updateDifficultyButtons();
+
+// Add this function to stop all sounds except background music
+function stopSounds() {
+  collectSound.pause();
+  collectSound.currentTime = 0;
+  wrongSound.pause();
+  wrongSound.currentTime = 0;
+  gameOverSound.pause();
+  gameOverSound.currentTime = 0;
+}

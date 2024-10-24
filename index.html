@@ -3,22 +3,38 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Word Snake Game</title>
+    <title>Space Word Snake Game</title>
     <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div class="game-container">
-      <div id="word-display"></div>
-      <canvas id="game-canvas"></canvas>
-      <div id="score-display">Score: <span id="score">0</span></div>
-      <div id="streak-display">Streak: <span id="streak">0</span></div>
-      <div id="high-score-display">
-        High Score: <span id="high-score">0</span>
+      <div id="start-screen" class="screen">
+        <h1>Space Word Snake</h1>
+        <button id="start-button">Start Game</button>
       </div>
-      <div class="difficulty-buttons">
-        <button onclick="changeDifficulty('easy')">Easy</button>
-        <button onclick="changeDifficulty('medium')">Medium</button>
-        <button onclick="changeDifficulty('hard')">Hard</button>
+      <div id="game-screen" class="screen hidden">
+        <div id="word-display"></div>
+        <canvas id="game-canvas"></canvas>
+        <div id="score-display">Score: <span id="score">0</span></div>
+        <div id="streak-display">Streak: <span id="streak">0</span></div>
+        <div id="high-score-display">
+          High Score: <span id="high-score">0</span>
+        </div>
+        <div class="difficulty-buttons">
+          <button onclick="changeDifficulty('easy')">Easy</button>
+          <button onclick="changeDifficulty('medium')">Medium</button>
+          <button onclick="changeDifficulty('hard')">Hard</button>
+        </div>
+      </div>
+      <div id="game-over-screen" class="screen hidden">
+        <h2>Game Over</h2>
+        <p>Your score: <span id="final-score"></span></p>
+        <p>High score: <span id="final-high-score"></span></p>
+        <button id="restart-button">Play Again</button>
       </div>
     </div>
     <script src="game.js"></script>
