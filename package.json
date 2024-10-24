@@ -1,0 +1,12 @@
+{
+  "name": "word-snake-game",
+  "version": "1.0.0",
+  "description": "A word snake game",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
