@@ -25,9 +25,72 @@ let gameSpeed = 100; // Initial game speed
 
 // Word database
 const wordDatabase = {
-  easy: ["CAT", "DOG", "RUN", "JUMP", "PLAY"],
-  medium: ["HOUSE", "SNAKE", "APPLE", "BOOK", "GAME"],
-  hard: ["COMPLEX", "DIFFICULT", "CHALLENGE", "ADVANCED", "EXPERT"]
+  easy: [
+    "CAT",
+    "DOG",
+    "SUN",
+    "HAT",
+    "BALL",
+    "RED",
+    "BIG",
+    "SMALL",
+    "HAPPY",
+    "SAD",
+    "PEN",
+    "BOOK",
+    "TREE",
+    "FISH",
+    "BIRD",
+    "BLUE",
+    "TALL",
+    "SHORT",
+    "FUNNY",
+    "NICE"
+  ],
+  medium: [
+    "FRIEND",
+    "SCHOOL",
+    "PENCIL",
+    "TEACHER",
+    "RECESS",
+    "LUNCH",
+    "STORY",
+    "CLOCK",
+    "PAINT",
+    "MUSIC",
+    "GARDEN",
+    "LIBRARY",
+    "SCIENCE",
+    "HISTORY",
+    "COMPUTER",
+    "BICYCLE",
+    "PLAYGROUND",
+    "HOMEWORK",
+    "CALENDAR",
+    "BACKPACK"
+  ],
+  hard: [
+    "PHOTOSYNTHESIS",
+    "CIVILIZATION",
+    "ECOSYSTEM",
+    "DEMOCRACY",
+    "HYPOTHESIS",
+    "REVOLUTION",
+    "ALGORITHM",
+    "METAPHOR",
+    "CHROMOSOME",
+    "EQUILIBRIUM",
+    "THERMODYNAMICS",
+    "BIODIVERSITY",
+    "PHILANTHROPY",
+    "RENAISSANCE",
+    "QUANTUM",
+    "PHILOSOPHY",
+    "ARCHAEOLOGY",
+    "LINGUISTICS",
+    "PSYCHOLOGY",
+    "ASTROPHYSICS"
+  ]
 };
 
 let currentDifficulty = "medium";
